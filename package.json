@@ -37,6 +37,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"mongodb": "^6.6.2"
+		"mongodb": "^6.6.2",
+		"openai": "^4.47.1"
 	}
 }
