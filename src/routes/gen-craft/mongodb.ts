@@ -1,8 +1,11 @@
-import { MongoClient, ObjectId } from "mongodb";
+import { MongoClient, ObjectId, Db } from "mongodb";
 /**
  * Class representing a MongoDB database connection and interactions
  */
 class MongoDB {
+    mongoURL: string;
+    client: MongoClient;
+    db: Db;
     /**
      * constructor
      * @param {string} db_user - user name for mongo
@@ -11,7 +14,7 @@ class MongoDB {
      * @param {string} db_name - name of mongo db
      * and sets up properties for the MongoDB client and database
      */
-    constructor(db_user, db_pass, db_host, db_name){
+    constructor(db_user: string, db_pass: string, db_host: string, db_name: string){
         this.mongoURL = `mongodb+srv://${db_user}:${db_pass}@${db_host}/${db_name}?retryWrites=true&w=majority&appName=Cluster0`;
         this.client = new MongoClient(this.mongoURL);
         this.db = this.client.db();
@@ -27,10 +30,10 @@ class MongoDB {
     /**
      * Creates a new document in the specified collection
      * @param {string} collectionName - the name of the collection
-     * @param {Object} data - the data to be inserted into the collection
+     * @param {Record} data - the data to be inserted into the collection
      * @returns {Promise<Object>} - a Promise that resolves with the acknoledgement document
      */
-    async create(collectionName, data) {
+    async create(collectionName: string, data: Record<string,unknown>) {
         const collection = this.db.collection(collectionName);
         const res = await collection.insertOne(data);
         return res;
@@ -42,7 +45,7 @@ class MongoDB {
      * @param {string} _id - the _id of the document to find
      * @returns {Promise<cursor>} - a Promise that resolves with the cursor
      */
-    async find(collectionName, _id) {
+    async find(collectionName: string, _id:string) {
         const collection = this.db.collection(collectionName);
         const oID = new ObjectId(_id);
         const cursor = collection.find({

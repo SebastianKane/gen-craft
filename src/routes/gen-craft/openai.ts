@@ -5,16 +5,18 @@ import { Stream } from "openai/streaming.mjs";
  * Class representing a Open AI API Interactions
  */
 class GPT {
+    openai: OpenAI;
+	modelName: string;
     /**
      * constructor
      * @param {string} modelName - GPT Model Name
      * @param {string} openAIKey - Open AI API Key
      * and sets up properties for the openAI API
      */
-    constructor(modelName, openAIKey){
+    constructor(modelName: string, openAIKey: string){
         this.openai = new OpenAI();
         this.openai.apiKey = openAIKey;
-        this.key = modelName;
+        this.modelName = modelName;
     }
         /**
      * Creates a stream object
@@ -27,9 +29,9 @@ class GPT {
      *     process.stdout.write(chunk.choices[0]?.delta?.content || "");
      * }
      */
-    async stream(messages) {
+    async stream(messages: OpenAI.ChatCompletionAssistantMessageParam) {
         return await this.openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
+            model: this.modelName,
             messages: [messages],
             stream: true,
         });
