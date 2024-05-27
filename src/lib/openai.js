@@ -20,7 +20,7 @@ class GPT {
      * Creates a stream object
      * Reference 05-27 -> https://platform.openai.com/docs/api-reference/streaming
      * @param {OpenAI.ChatCompletionAssistantMessageParam} messages - Previous messages and role. Example: {{"role": "user", "content": "Say this is a test"}}
-     * @returns {Promise<Stream<any>>} - a Promise that resolves with the cursor **figure out stream type for docs
+     * @returns {Promise<Stream<any>>} - a Promise that returns an OpenAI Stream object **figure out stream type for docs
      * usage: 
      * stream = mygpt.stream([{"role": "user", "content": "Say this is a test"}]);
      * for await (const chunk of stream) {
