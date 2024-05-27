@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Game } from './game';
+import { Game } from '../gen-craft/game';
 
 describe('game test', () => {
 	it('returns true when a valid word is entered', () => {

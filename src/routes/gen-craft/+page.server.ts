@@ -1,6 +1,6 @@
 import { fail } from '@sveltejs/kit';
-import { Game } from './game';
-import type { PageServerLoad, Actions } from './$types';
+import { Game } from '../gen-craft/game';
+import type { PageServerLoad, Actions } from '../sverdle/$types';
 
 export const load = (({ cookies }) => {
 	const game = new Game(cookies.get('sverdle'));
