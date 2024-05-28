@@ -1,5 +1,5 @@
 import type { squareFill } from "../../lib/stores/interfaces";
-
+import { logger } from "$lib/stores/logger";
 
 export function createConstructionID(methodName : string, input : string[][]){
     return `${methodName}>>${input.join("|")}`
@@ -40,11 +40,13 @@ class CraftMethod {
                 }
             });
             output = await res.json();
+            return output.text();
         } catch (error) {
-            // TODO: Add Logging in the future.
-            console.log(error);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const log = logger.child({ 'game.ts/craft': {input:input}});
+            logger.error(error);
         }
-        return output;
+        
 
     }
 
