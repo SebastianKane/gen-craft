@@ -1,69 +1,81 @@
-import { fail } from '@sveltejs/kit';
 import { Game } from '../gen-craft/game';
-import type { PageServerLoad, Actions } from '../sverdle/$types';
+import type { squareFill } from "./game";
+// import type { PageServerLoad, Actions } from '../gen-craft/$types';
+import { OPENAI_API_KEY } from "$env/static/private";
+import { GPT } from "./openai";
+import { generateCraftRequestStrings } from './gpt-request-templates/craft';
+// export const load = (({ cookies }) => {
+// 	const game = new Game(cookies.get('gen-craft'));
 
-export const load = (({ cookies }) => {
-	const game = new Game(cookies.get('sverdle'));
+// 	return {
+// 		/**
+// 		 * The player's guessed words so far
+// 		 */
+// 		guesses: game.guesses,
 
-	return {
-		/**
-		 * The player's guessed words so far
-		 */
-		guesses: game.guesses,
+// 		/**
+// 		 * An array of strings like '__x_c' corresponding to the guesses, where 'x' means
+// 		 * an exact match, and 'c' means a close match (right letter, wrong place)
+// 		 */
+// 		answers: game.answers,
 
-		/**
-		 * An array of strings like '__x_c' corresponding to the guesses, where 'x' means
-		 * an exact match, and 'c' means a close match (right letter, wrong place)
-		 */
-		answers: game.answers,
+// 		/**
+// 		 * The correct answer, revealed if the game is over
+// 		 */
+// 		answer: game.answers.length >= 6 ? game.answer : null
+// 	};
+// }) satisfies PageServerLoad;
 
-		/**
-		 * The correct answer, revealed if the game is over
-		 */
-		answer: game.answers.length >= 6 ? game.answer : null
-	};
-}) satisfies PageServerLoad;
-
-export const actions = {
+export async function makeCraftRequest(methodName : string, input : string[][], outputSchema : squareFill[][]){
 	/**
-	 * Modify game state in reaction to a keypress. If client-side JavaScript
-	 * is available, this will happen in the browser instead of here
+	 * Sends a prompt to gpt-4o to generate new concepts given a method, an input and an outputSchema.
 	 */
-	update: async ({ request, cookies }) => {
-		const game = new Game(cookies.get('sverdle'));
+	const gpt = new GPT('gpt-4o', OPENAI_API_KEY);
+	const reqStrings = generateCraftRequestStrings(methodName, input, outputSchema)
+	const res = await gpt.request(reqStrings.system, reqStrings.user);
+	return JSON.parse(res.choices[0].message.content || "");
 
-		const data = await request.formData();
-		const key = data.get('key');
+}
+// export const actions = {
+// 	/**
+// 	 * Modify game state in reaction to a keypress. If client-side JavaScript
+// 	 * is available, this will happen in the browser instead of here
+// 	 */
+// 	update: async ({ request, cookies }) => {
+// 		const game = new Game(cookies.get('sverdle'));
 
-		const i = game.answers.length;
+// 		const data = await request.formData();
+// 		const key = data.get('key');
 
-		if (key === 'backspace') {
-			game.guesses[i] = game.guesses[i].slice(0, -1);
-		} else {
-			game.guesses[i] += key;
-		}
+// 		const i = game.answers.length;
 
-		cookies.set('sverdle', game.toString(), { path: '/' });
-	},
+// 		if (key === 'backspace') {
+// 			game.guesses[i] = game.guesses[i].slice(0, -1);
+// 		} else {
+// 			game.guesses[i] += key;
+// 		}
 
-	/**
-	 * Modify game state in reaction to a guessed word. This logic always runs on
-	 * the server, so that people can't cheat by peeking at the JavaScript
-	 */
-	enter: async ({ request, cookies }) => {
-		const game = new Game(cookies.get('sverdle'));
+// 		cookies.set('sverdle', game.toString(), { path: '/' });
+// 	},
 
-		const data = await request.formData();
-		const guess = data.getAll('guess') as string[];
+// 	/**
+// 	 * Modify game state in reaction to a guessed word. This logic always runs on
+// 	 * the server, so that people can't cheat by peeking at the JavaScript
+// 	 */
+// 	enter: async ({ request, cookies }) => {
+// 		const game = new Game(cookies.get('sverdle'));
 
-		if (!game.enter(guess)) {
-			return fail(400, { badGuess: true });
-		}
+// 		const data = await request.formData();
+// 		const guess = data.getAll('guess') as string[];
 
-		cookies.set('sverdle', game.toString(), { path: '/' });
-	},
+// 		if (!game.enter(guess)) {
+// 			return fail(400, { badGuess: true });
+// 		}
 
-	restart: async ({ cookies }) => {
-		cookies.delete('sverdle', { path: '/' });
-	}
-} satisfies Actions;
+// 		cookies.set('sverdle', game.toString(), { path: '/' });
+// 	},
+
+// 	restart: async ({ cookies }) => {
+// 		cookies.delete('sverdle', { path: '/' });
+// 	}
+// } satisfies Actions;

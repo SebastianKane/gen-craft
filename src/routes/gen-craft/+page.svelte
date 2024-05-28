@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { confetti } from '@neoconfetti/svelte';
 	import { enhance } from '$app/forms';
-	import type { PageData, ActionData } from '../sverdle/$types';
+	import type { PageData, ActionData } from '../gen-craft/$types';
 	import { reduced_motion } from './reduced-motion';
 
 	export let data: PageData;
@@ -36,39 +36,39 @@
 		classnames = {};
 		description = {};
 
-		data.answers.forEach((answer, i) => {
-			const guess = data.guesses[i];
+		// data.answers.forEach((answer, i) => {
+		// 	const guess = data.guesses[i];
 
-			for (let i = 0; i < 5; i += 1) {
-				const letter = guess[i];
+		// 	for (let i = 0; i < 5; i += 1) {
+		// 		const letter = guess[i];
 
-				if (answer[i] === 'x') {
-					classnames[letter] = 'exact';
-					description[letter] = 'correct';
-				} else if (!classnames[letter]) {
-					classnames[letter] = answer[i] === 'c' ? 'close' : 'missing';
-					description[letter] = answer[i] === 'c' ? 'present' : 'absent';
-				}
-			}
-		});
+		// 		if (answer[i] === 'x') {
+		// 			classnames[letter] = 'exact';
+		// 			description[letter] = 'correct';
+		// 		} else if (!classnames[letter]) {
+		// 			classnames[letter] = answer[i] === 'c' ? 'close' : 'missing';
+		// 			description[letter] = answer[i] === 'c' ? 'present' : 'absent';
+		// 		}
+		// 	}
+		// });
 	}
 
 	/**
 	 * Modify the game state without making a trip to the server,
 	 * if client-side JavaScript is enabled
 	 */
-	function update(event: MouseEvent) {
-		const key = (event.target as HTMLButtonElement).getAttribute(
-			'data-key'
-		);
+	// function update(event: MouseEvent) {
+	// 	const key = (event.target as HTMLButtonElement).getAttribute(
+	// 		'data-key'
+	// 	);
 
-		if (key === 'backspace') {
-			currentGuess = currentGuess.slice(0, -1);
-			if (form?.badGuess) form.badGuess = false;
-		} else if (currentGuess.length < 5) {
-			currentGuess += key;
-		}
-	}
+	// 	if (key === 'backspace') {
+	// 		currentGuess = currentGuess.slice(0, -1);
+	// 		if (form?.badGuess) form.badGuess = false;
+	// 	} else if (currentGuess.length < 5) {
+	// 		currentGuess += key;
+	// 	}
+	// }
 
 	/**
 	 * Trigger form logic in response to a keydown event, so that
@@ -94,7 +94,7 @@
 
 <h1 class="visually-hidden">Sverdle</h1>
 
-<form
+<!-- <form
 	method="POST"
 	action="?/enter"
 	use:enhance={() => {
@@ -104,9 +104,9 @@
 		};
 	}}
 >
-	<a class="how-to-play" href="/sverdle/how-to-play">How to play</a>
+	<a class="how-to-play" href="/sverdle/how-to-play">How to play</a> -->
 
-	<div class="grid" class:playing={!won} class:bad-guess={form?.badGuess}>
+	<!-- <div class="grid" class:playing={!won} class:bad-guess={form?.badGuess}>
 		{#each Array.from(Array(6).keys()) as row (row)}
 			{@const current = row === i}
 			<h2 class="visually-hidden">Row {row + 1}</h2>
@@ -135,11 +135,11 @@
 						<input name="guess" disabled={!current} type="hidden" {value} />
 					</div>
 				{/each}
-			</div>
-		{/each}
-	</div>
+			</div> -->
+		<!-- {/each} -->
+	<!-- </div> -->
 
-	<div class="controls">
+	<!-- <div class="controls">
 		{#if won || data.answers.length >= 6}
 			{#if !won && data.answer}
 				<p>the answer was "{data.answer}"</p>
@@ -182,7 +182,7 @@
 			</div>
 		{/if}
 	</div>
-</form>
+</form> -->
 
 {#if won}
 	<div
