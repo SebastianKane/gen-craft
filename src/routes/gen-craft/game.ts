@@ -32,15 +32,20 @@ class CraftMethod {
             }
             //TODO: Combining regardless. Add appropriate safeguards in the system.
             //const res = makeCraftRequest(this.name, input, this.outputSchema);
-            const res = await fetch('/api/gpt/makeCraft', {
+
+            const findRes = await fetch('/api/concept/find/byConstructionID', {
                 method: 'POST',
-                body: JSON.stringify({ methodName:this.name,input:input, outputSchema: this.outputSchema }),
+                body: JSON.stringify({ constructionID:createConstructionID(this.name, input) }),
                 headers: {
                     'content-type': 'application/json'
                 }
             });
-            output = await res.json();
-            return output.text();
+            const findOutput = await findRes.json();
+            if (findOutput){
+                return findOutput
+            }else{
+                return await this.createNewConcept(input);
+            }
         } catch (error) {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const log = logger.child({ 'game.ts/craft': {input:input}});
@@ -48,6 +53,29 @@ class CraftMethod {
         }
         
 
+    }
+    
+    async createNewConcept(input : string[][]){
+        const gptRes = await fetch('/api/gpt/makeCraft', {
+            method: 'POST',
+            body: JSON.stringify({ methodName:this.name,input:input, outputSchema: this.outputSchema }),
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
+        const gptOutput = await gptRes.json();
+        if (gptOutput.type === 'concept') {
+            const findRes = await fetch('/api/concept/create', {
+                method: 'POST',
+                body: JSON.stringify({ conceptName : gptOutput.name,constructionID:createConstructionID(this.name, input) }),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+            return await findRes.json();
+        }else if (gptOutput.type === 'method'){
+            console.log();
+        }
     }
 
 }

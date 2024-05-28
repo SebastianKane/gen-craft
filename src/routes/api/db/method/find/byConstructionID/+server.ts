@@ -5,12 +5,12 @@ import { logger } from "$lib/stores/logger";
 export async function GET(constructionID : string){
     try {
         const db = new MongoDB(DB_USER,DB_HOST,DB_PASS,DB_NAME);
-        const output = await db.findByConstructionID('concepts',constructionID);
+        const output = await db.findByConstructionID('methods',constructionID);
         db.close();
         return output
     } catch (error) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const log = logger.child({ 'concept/find/constructionID' : { constructionID : constructionID } });
+        const log = logger.child({ 'method/find/constructionID' : { constructionID : constructionID } });
         logger.error(error);
     }
 }
