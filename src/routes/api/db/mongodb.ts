@@ -14,7 +14,7 @@ class MongoDB {
      * @param {string} db_name - name of mongo db
      * and sets up properties for the MongoDB client and database
      */
-    constructor(db_user: string, db_pass: string, db_host: string, db_name: string){
+    constructor(db_user : string, db_pass : string, db_host : string, db_name : string){
         this.mongoURL = `mongodb+srv://${db_user}:${db_pass}@${db_host}/${db_name}?retryWrites=true&w=majority&appName=Cluster0`;
         this.client = new MongoClient(this.mongoURL);
         this.db = this.client.db();
@@ -34,7 +34,7 @@ class MongoDB {
      * @param {Record} data - the data to be inserted into the collection
      * @returns {Promise<Object>} - a Promise that resolves with the acknoledgement document
      */
-    async create(collectionName: string, data: Record<string,unknown>) {
+    async create(collectionName : string, data : Record<string,unknown>) {
         const collection = this.db.collection(collectionName);
         const res = await collection.insertOne(data);
         return res;
@@ -46,7 +46,7 @@ class MongoDB {
      * @param {string} _id - the _id of the document to find
      * @returns {Promise<cursor>} - a Promise that resolves with the cursor
      */
-    async findbyID(collectionName: string, _id:string) {
+    async findbyID(collectionName : string, _id : string) {
         const collection = this.db.collection(collectionName);
         const oID = new ObjectId(_id);
         const cursor = collection.find({
@@ -60,12 +60,12 @@ class MongoDB {
      * @param {string} constructionID -  identify a concept or method by its construction
      * @returns {Promise<cursor>} - a Promise that resolves with the cursor
      */
-        async findByConstructionID(collectionName: string, constructionID:string) {
-            const collection = this.db.collection(collectionName);
-            const cursor = collection.find({
-                constructionID:constructionID
-            });
-            return cursor;
-        }
+    async findByConstructionID(collectionName : string, constructionID : string) {
+        const collection = this.db.collection(collectionName);
+        const cursor = collection.findOne({
+            constructionID:constructionID
+        });
+        return cursor;
+    }
 }
 export { MongoDB };
