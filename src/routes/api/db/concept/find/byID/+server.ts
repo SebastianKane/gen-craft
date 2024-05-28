@@ -7,7 +7,9 @@ export async function GET(_id : string){
         const db = new MongoDB(DB_USER,DB_HOST,DB_PASS,DB_NAME);
         const output = await db.findbyID('concepts', _id);
         db.close();
-        return output
+        return {
+            data : output
+        }
     } catch (error) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const log = logger.child({ 'concept/find/byID': {_id:_id} });

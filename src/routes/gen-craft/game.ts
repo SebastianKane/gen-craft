@@ -58,23 +58,41 @@ class CraftMethod {
     async createNewConcept(input : string[][]){
         const gptRes = await fetch('/api/gpt/makeCraft', {
             method: 'POST',
-            body: JSON.stringify({ methodName:this.name,input:input, outputSchema: this.outputSchema }),
+            body: JSON.stringify({ 
+                methodName:this.name,input:input, 
+                outputSchema: this.outputSchema 
+            }),
             headers: {
                 'content-type': 'application/json'
             }
         });
         const gptOutput = await gptRes.json();
-        if (gptOutput.type === 'concept') {
-            const findRes = await fetch('/api/concept/create', {
+        const gptData = gptOutput.data;
+        if (gptData.type === 'concept') {
+            const createRes = await fetch('/api/concept/create', {
                 method: 'POST',
-                body: JSON.stringify({ conceptName : gptOutput.name,constructionID:createConstructionID(this.name, input) }),
+                body: JSON.stringify({ 
+                    conceptName : gptData.name,
+                    constructionID:createConstructionID(this.name, input) 
+                }),
                 headers: {
                     'content-type': 'application/json'
                 }
             });
-            return await findRes.json();
-        }else if (gptOutput.type === 'method'){
-            console.log();
+            return await createRes.json();
+        }else if (gptData.type === 'method'){
+            const createRes = await fetch('/api/method/create', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    conceptName : gptOutput.name,
+                    constructionID:createConstructionID(this.name, input),
+                    inputSchema:gptOutput.inputSchema
+                }),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+            return await createRes.json();
         }
     }
 

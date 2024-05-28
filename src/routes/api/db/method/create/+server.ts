@@ -9,12 +9,15 @@ export async function POST(methodName : string, constructionID : string, inputSc
     try {
         const db = new MongoDB(DB_USER,DB_HOST,DB_PASS,DB_NAME);
         const output = await db.create('methods',
-        {
-            name : methodName,
-            constructionID : constructionID,
-            inputSchema : inputSchema,
-            outputSchema : outputSchema
-        });
+        { 
+            data:{
+                name : methodName,
+                constructionID : constructionID,
+                inputSchema : inputSchema,
+                outputSchema : outputSchema
+                }
+        }
+        );
         db.close();
         return output;
     } catch (error) {

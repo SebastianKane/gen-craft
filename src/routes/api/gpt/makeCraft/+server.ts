@@ -12,7 +12,9 @@ export async function GET(methodName : string, input : string[][], outputSchema 
 		const gpt = new GPT('gpt-4o', OPENAI_API_KEY);
 		const reqStrings = generateCraftRequestStrings(methodName, input, outputSchema)
 		const res = await gpt.request(reqStrings.system, reqStrings.user);
-		return JSON.parse(res.choices[0].message.content || "");	
+		return {
+			data : JSON.parse(res.choices[0].message.content || "")
+		};	
 	} catch (error) {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const log = logger.child({ 'gpt/makeCraft': {methodName:methodName, input:input, outputSchema:outputSchema} });

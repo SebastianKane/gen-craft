@@ -7,7 +7,9 @@ export async function GET(constructionID : string){
         const db = new MongoDB(DB_USER,DB_HOST,DB_PASS,DB_NAME);
         const output = await db.findByConstructionID('methods',constructionID);
         db.close();
-        return output
+        return {
+            data : output
+        }
     } catch (error) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const log = logger.child({ 'method/find/constructionID' : { constructionID : constructionID } });
