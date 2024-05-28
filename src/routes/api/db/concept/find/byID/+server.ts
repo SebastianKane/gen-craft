@@ -10,7 +10,7 @@ export async function GET(_id : string){
         return output
     } catch (error) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const log = logger.child({ 'concept/find/byID': _id });
+        const log = logger.child({ 'concept/find/byID': {_id:_id} });
         logger.error(error);   
     }
 }

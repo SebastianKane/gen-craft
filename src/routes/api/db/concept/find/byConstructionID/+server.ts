@@ -10,7 +10,7 @@ export async function GET(constructionID : string){
         return output
     } catch (error) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const log = logger.child({ 'concept/find/constructionID': constructionID });
+        const log = logger.child({ 'concept/find/constructionID': {constructionID:constructionID} });
         logger.error(error);
         
     }
