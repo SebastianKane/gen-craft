@@ -1,9 +1,6 @@
-import { Game } from '../gen-craft/game';
-import type { squareFill } from "./game";
+// import { Game } from '../gen-craft/game';
 // import type { PageServerLoad, Actions } from '../gen-craft/$types';
-import { OPENAI_API_KEY } from "$env/static/private";
-import { GPT } from "./openai";
-import { generateCraftRequestStrings } from './gpt-request-templates/craft';
+
 // export const load = (({ cookies }) => {
 // 	const game = new Game(cookies.get('gen-craft'));
 
@@ -26,16 +23,6 @@ import { generateCraftRequestStrings } from './gpt-request-templates/craft';
 // 	};
 // }) satisfies PageServerLoad;
 
-export async function makeCraftRequest(methodName : string, input : string[][], outputSchema : squareFill[][]){
-	/**
-	 * Sends a prompt to gpt-4o to generate new concepts given a method, an input and an outputSchema.
-	 */
-	const gpt = new GPT('gpt-4o', OPENAI_API_KEY);
-	const reqStrings = generateCraftRequestStrings(methodName, input, outputSchema)
-	const res = await gpt.request(reqStrings.system, reqStrings.user);
-	return JSON.parse(res.choices[0].message.content || "");
-
-}
 // export const actions = {
 // 	/**
 // 	 * Modify game state in reaction to a keypress. If client-side JavaScript

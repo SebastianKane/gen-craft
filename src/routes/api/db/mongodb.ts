@@ -19,6 +19,7 @@ class MongoDB {
         this.client = new MongoClient(this.mongoURL);
         this.db = this.client.db();
     }
+    
     async close(){
         try{
             await this.client.close();
@@ -45,7 +46,7 @@ class MongoDB {
      * @param {string} _id - the _id of the document to find
      * @returns {Promise<cursor>} - a Promise that resolves with the cursor
      */
-    async find(collectionName: string, _id:string) {
+    async findbyID(collectionName: string, _id:string) {
         const collection = this.db.collection(collectionName);
         const oID = new ObjectId(_id);
         const cursor = collection.find({
@@ -53,5 +54,18 @@ class MongoDB {
         });
         return cursor;
     }
+    /**
+     * Finds documents by their _id in the specified collection
+     * @param {string} collectionName - the name of the collection
+     * @param {string} constructionID -  identify a concept or method by its construction
+     * @returns {Promise<cursor>} - a Promise that resolves with the cursor
+     */
+        async findByConstructionID(collectionName: string, constructionID:string) {
+            const collection = this.db.collection(collectionName);
+            const cursor = collection.find({
+                constructionID:constructionID
+            });
+            return cursor;
+        }
 }
 export { MongoDB };

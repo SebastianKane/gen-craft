@@ -1,4 +1,4 @@
-import type { squareFill } from "../game";
+import type { squareFill } from "$lib/stores/interfaces"
 export const  generateCraftRequestStrings = (methodName : string, input : string[][], outputSchema : squareFill[][]) => {
     return {
         system :`
