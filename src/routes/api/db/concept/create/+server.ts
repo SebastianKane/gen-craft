@@ -7,7 +7,7 @@ export const POST = (async ({ request }) => {
     */
     const {conceptName, constructionID} = await request.json();
     try {
-        const db = new MongoDB(DB_USER,DB_HOST,DB_PASS,DB_NAME);
+        const db = new MongoDB(DB_USER,DB_PASS,DB_HOST,DB_NAME);
         const output = await db.create('methods',
         
         { 
@@ -16,6 +16,7 @@ export const POST = (async ({ request }) => {
                 constructionID : constructionID,
                 }
         });
+        
         db.close();
         return json({output, status : 200});
     } catch (error) {

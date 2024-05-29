@@ -30,7 +30,7 @@ class CraftMethod {
             //TODO: Combining regardless. Add appropriate safeguards in the system.
             //const res = makeCraftRequest(this.name, input, this.outputSchema);
 
-            const findRes = await fetch('/api/concept/find/byConstructionID', {
+            const findRes = await fetch('/api/db/concept/find/byConstructionID', {
                 method: 'POST',
                 body: JSON.stringify({ constructionID:createConstructionID(this.name, input) }),
                 headers: {
@@ -80,8 +80,9 @@ class CraftMethod {
             }
         }
         if(parsable){
+            parsedOutput = parsedOutput.output;
             if (parsedOutput.type === 'concept') {
-                const createRes = await fetch('/api/concept/create', {
+                const createRes = await fetch('/api/db/concept/create', {
                     method: 'POST',
                     body: JSON.stringify({ 
                         conceptName : parsedOutput.name,
@@ -93,7 +94,7 @@ class CraftMethod {
                 });
                 const createOutput = await createRes.json();
             }else if (parsedOutput.type === 'method'){
-                const createRes = await fetch('/api/method/create', {
+                const createRes = await fetch('/api/db/method/create', {
                     method: 'POST',
                     body: JSON.stringify({ 
                         conceptName : parsedOutput.name,

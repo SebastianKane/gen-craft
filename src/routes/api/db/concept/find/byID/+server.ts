@@ -7,7 +7,7 @@ import { json } from "@sveltejs/kit";
 export const POST = (async ({ request }) => {
     const { _id } = await request.json();
     try {
-        const db = new MongoDB(DB_USER,DB_HOST,DB_PASS,DB_NAME);
+        const db = new MongoDB(DB_USER,DB_PASS,DB_HOST,DB_NAME);
         const output = await db.findbyID('concepts',_id);
         db.close();
         return json({

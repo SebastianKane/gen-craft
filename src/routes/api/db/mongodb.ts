@@ -16,8 +16,10 @@ class MongoDB {
      */
     constructor(db_user : string, db_pass : string, db_host : string, db_name : string){
         this.mongoURL = `mongodb+srv://${db_user}:${db_pass}@${db_host}/${db_name}?retryWrites=true&w=majority&appName=Cluster0`;
+        console.log(this.mongoURL)
         this.client = new MongoClient(this.mongoURL);
         this.db = this.client.db();
+        console.log('Created connection with MongoDB');
     }
     
     async close(){
@@ -35,9 +37,16 @@ class MongoDB {
      * @returns {Promise<Object>} - a Promise that resolves with the acknoledgement document
      */
     async create(collectionName : string, data : Record<string,unknown>) {
+        try {
+        console.log(collectionName, data)
         const collection = this.db.collection(collectionName);
         const res = await collection.insertOne(data);
+        console.log('hello',res)
         return res;
+        } catch (error) {
+            console.log(error);
+        }
+
     }
     
     /**
