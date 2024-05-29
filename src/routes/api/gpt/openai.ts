@@ -1,3 +1,4 @@
+import { OPENAI_API_KEY } from "$env/static/private";
 import { OpenAI } from "openai";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Stream } from "openai/streaming.mjs";
@@ -14,7 +15,7 @@ class GPT {
      * and sets up properties for the openAI API
      */
     constructor(modelName: string, openAIKey: string){
-        this.openai = new OpenAI();
+        this.openai = new OpenAI({apiKey:OPENAI_API_KEY});
         this.openai.apiKey = openAIKey;
         this.modelName = modelName;
     }
@@ -34,6 +35,7 @@ class GPT {
         return await this.openai.chat.completions.create({
             model: this.modelName,
             messages: [{role : 'system', content :systemContent}, {role : 'user', content :userContent}],
+            "temperature": 0.2
         });
     }
 }

@@ -1,9 +1,6 @@
 import type { squareFill } from "../../lib/stores/interfaces";
 import { logger } from "$lib/stores/logger";
-
-export function createConstructionID(methodName : string, input : string[][]){
-    return `${methodName}>>${input.join("|")}`
-}
+import { createConstructionID } from "../../lib/stores/interfaces";
 
 class CraftMethod {
     name : string;
@@ -59,7 +56,8 @@ class CraftMethod {
         const gptRes = await fetch('/api/gpt/makeCraft', {
             method: 'POST',
             body: JSON.stringify({ 
-                methodName:this.name,input:input, 
+                methodName:this.name,
+                input:input, 
                 outputSchema: this.outputSchema 
             }),
             headers: {
@@ -67,7 +65,8 @@ class CraftMethod {
             }
         });
         const gptOutput = await gptRes.json();
-        const gptData = gptOutput.data;
+        console.log(gptOutput)
+        const gptData = await gptOutput.data;
         if (gptData.type === 'concept') {
             const createRes = await fetch('/api/concept/create', {
                 method: 'POST',
@@ -79,7 +78,8 @@ class CraftMethod {
                     'content-type': 'application/json'
                 }
             });
-            return await createRes.json();
+            const createOutput = await createRes.json();
+            return createOutput.data;
         }else if (gptData.type === 'method'){
             const createRes = await fetch('/api/method/create', {
                 method: 'POST',
@@ -92,7 +92,8 @@ class CraftMethod {
                     'content-type': 'application/json'
                 }
             });
-            return await createRes.json();
+            const createOutput = await createRes.json();
+            return createOutput.data;
         }
     }
 
@@ -100,14 +101,14 @@ class CraftMethod {
 
 export class Game {
     foundConcepts : string[]
-    foundMethods : CraftMethod
+    foundMethods : Record<string,CraftMethod>
 
 	/**
 	 * Create a game object from the player's cookie, or initialize a new game
 	 */
 	constructor() {
         this.foundConcepts = ['earth','water','fire','air']
-        this.foundMethods = new CraftMethod('Hand Crafting', [['#','#','#'],['#','#','#'],['#','#','#']], [['#']])
+        this.foundMethods = {'Hand Crafting' : new CraftMethod('Hand Crafting', [['#','#','#'],['#','#','#'],['#','#','#']], [['#']])}
 	}
 
 }

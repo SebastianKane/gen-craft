@@ -1,6 +1,12 @@
-// import { Game } from '../gen-craft/game';
-// import type { PageServerLoad, Actions } from '../gen-craft/$types';
+import { Game } from '../gen-craft/game';
+import type { PageServerLoad, Actions } from '../gen-craft/$types';
 
+export const load = ( async ({cookies}) => {
+    const game = new Game();
+    const method = game.foundMethods['Hand Crafting'];
+
+
+}) satisfies PageServerLoad
 // export const load = (({ cookies }) => {
 // 	const game = new Game(cookies.get('gen-craft'));
 
