@@ -41,7 +41,8 @@ class CraftMethod {
             if (findOutput){
                 return findOutput
             }else{
-                return await this.createNewConcept(input);
+            return await this.createNewConcept(input);
+
             }
         } catch (error) {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -53,47 +54,59 @@ class CraftMethod {
     }
     
     async createNewConcept(input : string[][]){
-        const gptRes = await fetch('/api/gpt/makeCraft', {
-            method: 'POST',
-            body: JSON.stringify({ 
-                methodName:this.name,
-                input:input, 
-                outputSchema: this.outputSchema 
-            }),
-            headers: {
-                'content-type': 'application/json'
+        let createOutput;
+        let parsable = false;
+        let max = 5;
+        let tries = 0;
+        let parsedOutput;
+        while (!parsable && tries < max){
+            const gptRes = await fetch('/api/gpt/makeCraft', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    methodName:this.name,
+                    input:input, 
+                    outputSchema: this.outputSchema 
+                }),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+            const gptOutput = await gptRes.json();
+            try {
+                parsedOutput = JSON.parse(gptOutput.data);
+                parsable = true;
+            } catch (e) {
+                tries++;
             }
-        });
-        const gptOutput = await gptRes.json();
-        console.log(gptOutput)
-        const gptData = await gptOutput.data;
-        if (gptData.type === 'concept') {
-            const createRes = await fetch('/api/concept/create', {
-                method: 'POST',
-                body: JSON.stringify({ 
-                    conceptName : gptData.name,
-                    constructionID:createConstructionID(this.name, input) 
-                }),
-                headers: {
-                    'content-type': 'application/json'
-                }
-            });
-            const createOutput = await createRes.json();
-            return createOutput.data;
-        }else if (gptData.type === 'method'){
-            const createRes = await fetch('/api/method/create', {
-                method: 'POST',
-                body: JSON.stringify({ 
-                    conceptName : gptOutput.name,
-                    constructionID:createConstructionID(this.name, input),
-                    inputSchema:gptOutput.inputSchema
-                }),
-                headers: {
-                    'content-type': 'application/json'
-                }
-            });
-            const createOutput = await createRes.json();
-            return createOutput.data;
+        }
+        if(parsable){
+            if (parsedOutput.type === 'concept') {
+                const createRes = await fetch('/api/concept/create', {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        conceptName : parsedOutput.name,
+                        constructionID:createConstructionID(this.name, input) 
+                    }),
+                    headers: {
+                        'content-type': 'application/json'
+                    }
+                });
+                const createOutput = await createRes.json();
+            }else if (parsedOutput.type === 'method'){
+                const createRes = await fetch('/api/method/create', {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        conceptName : parsedOutput.name,
+                        constructionID:createConstructionID(this.name, input),
+                        inputSchema:parsedOutput.inputSchema
+                    }),
+                    headers: {
+                        'content-type': 'application/json'
+                    }
+                });
+                const createOutput = await createRes.json();
+            }
+        return parsedOutput;
         }
     }
 

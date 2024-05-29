@@ -89,6 +89,7 @@ async function testy(){
 const game = new Game();
 const method = game.foundMethods['Hand Crafting'];
 const gameOut = await method.createNewConcept([['','','fire'],['','','water'],['','','',]]);
+console.log(gameOut)
 return gameOut
 }
 </script>

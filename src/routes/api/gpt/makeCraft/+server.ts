@@ -16,7 +16,7 @@ export const POST = (async ({ request }) => {
 		const reqStrings = generateCraftRequestStrings(methodName, input, outputSchema);
 		const res = await gpt.request(reqStrings.system, reqStrings.user);
 		return json({
-			data : JSON.parse(res.choices[0].message.content || ""),
+			data : res.choices[0].message.content || "",
 			status : 200
 		});	
 	} catch (error) {
