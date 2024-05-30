@@ -21,9 +21,59 @@ function printArr(arr : string[][] | string[] | string) {
 // '#' Represents fillable boxes on the grid
 // '' Represents unfillable boxes on the grid
 export type squareFill = '' | '#';
-
+/**
+ * Reduces 2D list into the smallest 2D list that still contains all elements and their original structure.
+ * @param twoDList - Input a rectangular 2D list.
+ * @returns {string[][]}- Trimmed 2D list.
+ */
+function trim2DList( twoDList : string[][]){
+    let removeTop = true;
+    let removeBottom = true;
+    let removeRight = true;
+    let removeLeft = true;
+    while (removeBottom || removeTop || removeLeft || removeRight){
+        if ( removeRight || removeLeft){
+            for( let i = 0; i < twoDList.length; i++){
+                if (twoDList[i][0] != ''){
+                    removeLeft = false;
+                }
+                if (twoDList[i][twoDList[i].length-1] !== ''){
+                    removeRight = false;
+                }
+            }
+        }
+        if ( removeTop || removeBottom){
+            for( let i = 0; i < twoDList[0].length; i++){
+                if (twoDList[0][i] != ''){
+                    removeTop = false;
+                }
+                if (twoDList[twoDList.length-1][i] !== ''){
+                    removeBottom = false;
+                }
+            }
+        }
+        if (removeTop) {
+            twoDList = twoDList.slice(1);
+        }
+        if ( removeBottom ) {
+            twoDList = twoDList.slice(0,-1)
+        }
+        if (removeRight) {
+            for( let i = 0; i < twoDList.length; i++){
+                twoDList[i] = twoDList[i].slice(0,-1)
+            }
+        }
+        if (removeLeft) {
+            for( let i = 0; i < twoDList.length; i++){
+                twoDList[i] = twoDList[i].slice(1)
+            }
+        }
+        return twoDList;
+    }
+}
 export function createConstructionID(methodName : string, input : string[][], x : number, y : number){
-    return `${methodName}>>${input.join("|")}[${x},${y}]`
+    const reducedInput = trim2DList(input); 
+    return `${methodName}>>${reducedInput?.join("|")}[${x},${y}]`
 }
 export const  generateCraftRequestStrings = (methodName : string, input : string[][]) => {
     return {
@@ -94,10 +144,9 @@ export const  generateCraftRequestStrings = (methodName : string, input : string
         
         Method Example 2:
         {
-            "thought process" : "This is the furnace from minecraft. Furnaces take a 1x1 input and return one thing as an ouput. Furnaces are made out of stone so this is made from cobblestone.",
+            "thought process" : "This is the furnace from minecraft. Furnaces take a 2x1 input and return one thing as an ouput. The bottom input usually receives coal and the top receives the material being cooked. Furnaces are made out of stone so this is made from cobblestone.",
             "newMethodName" : "furnace",
-            "newInputSchema" : [['#']],
-            "newInputSchema" : [['#']],
+            "newInputSchema" : [['#'],['#']],
             "type" : "method"
         }
         `,

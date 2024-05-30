@@ -1,6 +1,12 @@
 import type { squareFill } from "../../lib/stores/interfaces";
 import { logger } from "$lib/stores/logger";
 import { createConstructionID } from "../../lib/stores/interfaces";
+/**
+ * Replaces all empty strings in a nested list
+ * @param nestedList - A nested list of strings.
+ * @param replacement - New string to replace empty strings with.
+ * @returns - A new nested list with empty strings replaced.
+ */
 function replaceNoneEmptyString(nestedList : string[][], replacement : string){
     return nestedList.map(sublist =>
         sublist.map(item =>
@@ -8,6 +14,8 @@ function replaceNoneEmptyString(nestedList : string[][], replacement : string){
         )
     )
 }
+
+
 class CraftMethod {
     name : string;
     inputSchema : squareFill[][];
@@ -72,7 +80,7 @@ class CraftMethod {
         
 
     }
-
+    
     /**
      * 
      * @param input - Inputed concepts
