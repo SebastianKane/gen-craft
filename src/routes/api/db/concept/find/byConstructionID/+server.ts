@@ -6,9 +6,11 @@ import { json } from "@sveltejs/kit";
 
 export const POST = (async ({ request }) => {
     const { constructionID } = await request.json();
+    console.log(constructionID)
     try {
         const db = new MongoDB(DB_USER,DB_PASS,DB_HOST,DB_NAME);
-        const output = await db.findByConstructionID('concepts',constructionID);
+        const output = await db.findByConstructionID(constructionID, 'concepts');
+        console.log(output)
         db.close();
         return json({
             data : output,

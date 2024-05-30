@@ -8,20 +8,18 @@ export const POST = (async ({ request }) => {
     const {conceptName, constructionID} = await request.json();
     try {
         const db = new MongoDB(DB_USER,DB_PASS,DB_HOST,DB_NAME);
-        const output = await db.create('methods',
+        const output = await db.create('concepts',
         
         { 
-            data:{
-                name : conceptName,
-                constructionID : constructionID,
-                }
+            name : conceptName,
+            constructionID : constructionID,
         });
         
         db.close();
-        return json({output, status : 200});
+        return json({data : output, status : 200});
     } catch (error) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const log = logger.child({ 'method/create':{conceptName : conceptName, constructionID : constructionID} });
+        const log = logger.child({ 'concept/create':{conceptName : conceptName, constructionID : constructionID} });
         logger.error(error);
         return json({
 			status : 404

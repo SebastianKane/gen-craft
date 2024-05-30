@@ -16,7 +16,6 @@ class MongoDB {
      */
     constructor(db_user : string, db_pass : string, db_host : string, db_name : string){
         this.mongoURL = `mongodb+srv://${db_user}:${db_pass}@${db_host}/${db_name}?retryWrites=true&w=majority&appName=Cluster0`;
-        console.log(this.mongoURL)
         this.client = new MongoClient(this.mongoURL);
         this.db = this.client.db();
         console.log('Created connection with MongoDB');
@@ -38,11 +37,10 @@ class MongoDB {
      */
     async create(collectionName : string, data : Record<string,unknown>) {
         try {
-        console.log(collectionName, data)
-        const collection = this.db.collection(collectionName);
-        const res = await collection.insertOne(data);
-        console.log('hello',res)
-        return res;
+            console.log(collectionName, data)
+            const collection = this.db.collection(collectionName);
+            const res = await collection.insertOne(data);
+            return res;
         } catch (error) {
             console.log(error);
         }
@@ -69,12 +67,20 @@ class MongoDB {
      * @param {string} constructionID -  identify a concept or method by its construction
      * @returns {Promise<cursor>} - a Promise that resolves with the cursor
      */
-    async findByConstructionID(collectionName : string, constructionID : string) {
-        const collection = this.db.collection(collectionName);
-        const cursor = collection.findOne({
-            constructionID:constructionID
-        });
-        return cursor;
+    async findByConstructionID( constructionID : string, collectionName? : string,) {
+        //TODO ts forced this into being an ugly monstrosity. Make this pretty one day
+        if (!collectionName){
+            console.log('Work it!')
+            this.db
+        } else {
+            const collection = this.db.collection(collectionName);
+            const cursor = collection.findOne({
+                constructionID:constructionID
+            });
+            const output = await cursor;
+            return output;
+        }
     }
+    
 }
 export { MongoDB };

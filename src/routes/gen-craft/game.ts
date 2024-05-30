@@ -17,18 +17,15 @@ class CraftMethod {
         this.outputSchema = outputSchema;
     }
     async craft(input : string[][]){
-        let output = null;
         try {
             // Check if the two Schema's Match before Combining
             for (let i = 0; i < this.inputSchema.length; i++){
                 for(let j = 0; j < this.inputSchema[i].length; j++){
-                    if( this.inputSchema[i][j] == '#' && input[i][j] == '' ){
+                    if( this.inputSchema[i][j] == '' && input[i][j] != '' ){
                         throw new Error("Input's schema and inputSchema do not match! Stupid robit 😑");
                     }
                 }
             }
-            //TODO: Combining regardless. Add appropriate safeguards in the system.
-            //const res = makeCraftRequest(this.name, input, this.outputSchema);
 
             const findRes = await fetch('/api/db/concept/find/byConstructionID', {
                 method: 'POST',
@@ -38,23 +35,26 @@ class CraftMethod {
                 }
             });
             const findOutput = await findRes.json();
-            if (findOutput){
+            console.log('res',findOutput.data)
+            if (findOutput.data){
                 return findOutput
             }else{
-            return await this.createNewConcept(input);
-
+                console.log('CreatingNewConcept!')
+                return await this.createNewConcept(input);
             }
         } catch (error) {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const log = logger.child({ 'game.ts/craft': {input:input}});
             logger.error(error);
+            console.log(error)
         }
         
 
     }
-    
+    async multipleTryGPTRequest(){
+
+    }
     async createNewConcept(input : string[][]){
-        let createOutput;
         let parsable = false;
         let max = 5;
         let tries = 0;
@@ -72,15 +72,19 @@ class CraftMethod {
                 }
             });
             const gptOutput = await gptRes.json();
+            console.log(gptOutput)
             try {
                 parsedOutput = JSON.parse(gptOutput.data);
+
                 parsable = true;
             } catch (e) {
+                console.log(`Try ${tries} : Response from bot is not json parsable.`, e)
                 tries++;
             }
         }
         if(parsable){
-            parsedOutput = parsedOutput.output;
+            parsedOutput = parsedOutput || parsedOutput.output;
+            console.log('look here!',parsedOutput.type === 'concept', parsedOutput)
             if (parsedOutput.type === 'concept') {
                 const createRes = await fetch('/api/db/concept/create', {
                     method: 'POST',
@@ -97,9 +101,10 @@ class CraftMethod {
                 const createRes = await fetch('/api/db/method/create', {
                     method: 'POST',
                     body: JSON.stringify({ 
-                        conceptName : parsedOutput.name,
+                        methodName : parsedOutput.name,
                         constructionID:createConstructionID(this.name, input),
-                        inputSchema:parsedOutput.inputSchema
+                        inputSchema:parsedOutput.inputSchema,
+                        outputSchema:parsedOutput.outputSchema
                     }),
                     headers: {
                         'content-type': 'application/json'

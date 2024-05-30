@@ -1,4 +1,4 @@
-import { OPENAI_API_KEY } from "$env/static/private";
+import { OPENAI_API_KEY, GPT_Temp } from "$env/static/private";
 import { OpenAI } from "openai";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Stream } from "openai/streaming.mjs";
@@ -35,7 +35,7 @@ class GPT {
         return await this.openai.chat.completions.create({
             model: this.modelName,
             messages: [{role : 'system', content :systemContent}, {role : 'user', content :userContent}],
-            "temperature": 0.2
+            "temperature": parseFloat(GPT_Temp)
         });
     }
 }

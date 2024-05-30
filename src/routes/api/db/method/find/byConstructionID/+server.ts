@@ -8,7 +8,7 @@ export const POST = (async ({ request }) => {
     const { constructionID } = await request.json();
     try {
         const db = new MongoDB(DB_USER,DB_PASS,DB_HOST,DB_NAME);
-        const output = await db.findByConstructionID('methods',constructionID);
+        const output = await db.findByConstructionID(constructionID,'methods');
         db.close();
         return json({
             data : output,

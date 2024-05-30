@@ -11,16 +11,13 @@ export const POST = (async ({ request }) => {
         const db = new MongoDB(DB_USER,DB_PASS,DB_HOST,DB_NAME);
         const output = await db.create('methods',
         { 
-            data:{
-                name : methodName,
-                constructionID : constructionID,
-                inputSchema : inputSchema,
-                outputSchema : outputSchema
-                }
-        }
-        );
+            name : methodName,
+            constructionID : constructionID,
+            inputSchema : inputSchema,
+            outputSchema : outputSchema
+        });
         db.close();
-        return json({output, status : 200});
+        return json({data : output, status : 200});
     } catch (error) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const log = logger.child({ 'method/create':{
