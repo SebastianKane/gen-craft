@@ -1,7 +1,13 @@
 import type { squareFill } from "../../lib/stores/interfaces";
 import { logger } from "$lib/stores/logger";
 import { createConstructionID } from "../../lib/stores/interfaces";
-
+function replaceNoneEmptyString(nestedList : string[][], replacement : string){
+    return nestedList.map(sublist =>
+        sublist.map(item =>
+            item !== "" ? replacement : item
+        )
+    )
+}
 class CraftMethod {
     name : string;
     inputSchema : squareFill[][];
@@ -17,6 +23,21 @@ class CraftMethod {
         this.outputSchema = outputSchema;
     }
     async craft(input : string[][]){
+        for (let i = 0; i < this.outputSchema.length; i++){
+            for(let j = 0; j < this.outputSchema[i].length; j++){
+                this.craftOne(input,j,i);
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param input - Inputed concepts.
+     * @param x - Horizontal location in output grid.
+     * @param y - Vertical location in pouput grid.
+     * @returns 
+     */
+    async craftOne(input : string[][], x : number, y : number){
         try {
             // Check if the two Schema's Match before Combining
             for (let i = 0; i < this.inputSchema.length; i++){
@@ -29,7 +50,7 @@ class CraftMethod {
 
             const findRes = await fetch('/api/db/concept/find/byConstructionID', {
                 method: 'POST',
-                body: JSON.stringify({ constructionID:createConstructionID(this.name, input) }),
+                body: JSON.stringify({ constructionID:createConstructionID(this.name, input, x, y) }),
                 headers: {
                     'content-type': 'application/json'
                 }
@@ -40,7 +61,7 @@ class CraftMethod {
                 return findOutput
             }else{
                 console.log('CreatingNewConcept!')
-                return await this.createNewConcept(input);
+                return await this.createNewConcept(input, x, y);
             }
         } catch (error) {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -51,10 +72,15 @@ class CraftMethod {
         
 
     }
-    async multipleTryGPTRequest(){
 
-    }
-    async createNewConcept(input : string[][]){
+    /**
+     * 
+     * @param input - Inputed concepts
+     * @param x - Horizontal location in output grid
+     * @param y - Vertical location in pouput grid
+     * @returns - new concept record
+     */
+    async createNewConcept(input : string[][], x : number, y : number){
         let parsable = false;
         let max = 5;
         let tries = 0;
@@ -89,8 +115,8 @@ class CraftMethod {
                 const createRes = await fetch('/api/db/concept/create', {
                     method: 'POST',
                     body: JSON.stringify({ 
-                        conceptName : parsedOutput.name,
-                        constructionID:createConstructionID(this.name, input) 
+                        conceptName : parsedOutput.newConceptName,
+                        constructionID:createConstructionID(this.name, input, x, y) 
                     }),
                     headers: {
                         'content-type': 'application/json'
@@ -98,13 +124,14 @@ class CraftMethod {
                 });
                 const createOutput = await createRes.json();
             }else if (parsedOutput.type === 'method'){
+
                 const createRes = await fetch('/api/db/method/create', {
                     method: 'POST',
                     body: JSON.stringify({ 
-                        methodName : parsedOutput.name,
-                        constructionID:createConstructionID(this.name, input),
-                        inputSchema:parsedOutput.inputSchema,
-                        outputSchema:parsedOutput.outputSchema
+                        methodName : parsedOutput.newMethodName,
+                        constructionID:createConstructionID(this.name, input, x, y),
+                        inputSchema:replaceNoneEmptyString(parsedOutput.newInputSchema, "#"),
+                        outputSchema:replaceNoneEmptyString(parsedOutput.newOutputSchema, "#")
                     }),
                     headers: {
                         'content-type': 'application/json'

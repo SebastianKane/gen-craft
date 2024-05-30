@@ -13,7 +13,8 @@ export const POST = (async ({ request }) => {
 	const {methodName, input, outputSchema} = await request.json();
 	try {
 		const gpt = new GPT('gpt-4o', OPENAI_API_KEY)
-		const reqStrings = generateCraftRequestStrings(methodName, input, outputSchema);
+		const reqStrings = generateCraftRequestStrings(methodName, input);
+		console.log(reqStrings)
 		const res = await gpt.request(reqStrings.system, reqStrings.user);
 		return json({
 			data : res.choices[0].message.content || "",
@@ -24,8 +25,7 @@ export const POST = (async ({ request }) => {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const log = logger.child({ 'gpt/makeCraft': {
 			methodName : methodName, 
-			input : input, 
-			outputSchema : outputSchema} 
+			input : input} 
 		});
 		logger.error(error);
 		return json({
