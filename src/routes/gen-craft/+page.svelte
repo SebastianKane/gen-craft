@@ -88,7 +88,7 @@ import { Game } from './game';
 async function testy(){
 const game = new Game();
 const method = game.foundMethods['Hand Crafting'];
-const gameOut = await method.craft([['','',''],['','',''],['garden','fire','',]]);
+const gameOut = await method.craft([['','',''],['','',''],['unicorn','potato','',]]);
 console.log(gameOut)
 return gameOut
 }

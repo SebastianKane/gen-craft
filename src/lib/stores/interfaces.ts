@@ -37,7 +37,7 @@ function trim2DList( twoDList : string[][]){
                 if (twoDList[i][0] != ''){
                     removeLeft = false;
                 }
-                if (twoDList[i][twoDList[i].length-1] !== ''){
+                if (twoDList[i].length > 0 && (twoDList[i][twoDList[i].length-1] != '')){
                     removeRight = false;
                 }
             }
@@ -47,13 +47,13 @@ function trim2DList( twoDList : string[][]){
                 if (twoDList[0][i] != ''){
                     removeTop = false;
                 }
-                if (twoDList[twoDList.length-1][i] !== ''){
+                if (twoDList[0].length > 0 && (twoDList[twoDList.length-1][i] != '')){
                     removeBottom = false;
                 }
             }
         }
-        if (removeTop) {
-            twoDList = twoDList.slice(1);
+        if ( removeTop ) {
+            twoDList.shift();
         }
         if ( removeBottom ) {
             twoDList = twoDList.slice(0,-1)
@@ -65,11 +65,11 @@ function trim2DList( twoDList : string[][]){
         }
         if (removeLeft) {
             for( let i = 0; i < twoDList.length; i++){
-                twoDList[i] = twoDList[i].slice(1)
+                twoDList[i].shift()
             }
         }
-        return twoDList;
     }
+    return twoDList;
 }
 export function createConstructionID(methodName : string, input : string[][], x : number, y : number){
     const reducedInput = trim2DList(input); 
