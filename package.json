@@ -24,7 +24,6 @@
 		"@types/eslint": "^8.56.0",
 		"@typescript-eslint/eslint-plugin": "^7.0.0",
 		"@typescript-eslint/parser": "^7.0.0",
-		"eslint": "^9.3.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
 		"globals": "^15.3.0",
@@ -32,6 +31,7 @@
 		"prettier-plugin-svelte": "^3.1.2",
 		"svelte": "^4.2.7",
 		"svelte-check": "^3.6.0",
+		"svelte-motion": "^0.12.2",
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^7.11.0",
@@ -40,6 +40,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"eslint": "^8.57.0",
 		"mongodb": "^6.6.2",
 		"openai": "^4.47.1",
 		"pino": "^9.1.0",

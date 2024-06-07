@@ -16,7 +16,7 @@ function replaceNoneEmptyString(nestedList : string[][], replacement : string){
 }
 
 
-class CraftMethod {
+export class CraftMethod {
     name : string;
     inputSchema : squareFill[][];
     outputSchema : squareFill[][];
@@ -90,7 +90,7 @@ class CraftMethod {
      */
     async createNewConcept(input : string[][], x : number, y : number){
         let parsable = false;
-        let max = 5;
+        const max = 5;
         let tries = 0;
         let parsedOutput;
         while (!parsable && tries < max){
