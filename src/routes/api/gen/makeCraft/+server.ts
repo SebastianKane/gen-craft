@@ -8,7 +8,7 @@ export const POST = (async ({ request }) => {
 	/**
 	 * Sends a prompt to gpt-4o to generate new concepts given a method, an input and an outputSchema.
 	 */
-	const {input} = await request.json();
+	const {methodName, input} = await request.json();
 	try {
 		const gpt = new GPT('gpt-4o')
 		const reqStrings = generateCraftRequestStrings(methodName, input);
@@ -21,7 +21,7 @@ export const POST = (async ({ request }) => {
 	} catch (error) {
 		console.log(error)
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const log = logger.child({ 'gpt/makeCraft': {
+		const log = logger.child({ 'gen/makeCraft': {
 			methodName : methodName, 
 			input : input} 
 		});
