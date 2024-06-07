@@ -5,13 +5,13 @@ import { OpenAI } from "openai";
  */
 class GPT {
     openai: OpenAI;
-	modelName: "gpt-40" | "gpt-3.5-turbo";
+	modelName: "gpt-4o" | "gpt-3.5-turbo";
     /**
      * constructor
-     * @param {"gpt-40" | "gpt-3.5-turbo"} modelName - GPT Model Name
+     * @param {"gpt-4o" | "gpt-3.5-turbo"} modelName - GPT Model Name
      * and sets up properties for the openAI API
      */
-    constructor(modelName: "gpt-40" | "gpt-3.5-turbo"){
+    constructor(modelName: "gpt-4o" | "gpt-3.5-turbo"){
         this.openai = new OpenAI({apiKey:OPENAI_API_KEY});
         this.openai.apiKey = OPENAI_API_KEY;
         this.modelName = modelName;
