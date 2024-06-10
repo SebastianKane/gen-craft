@@ -39,7 +39,7 @@ export { GPT };
 /**
  * Class representing a Open AI API Interactions
  */
-class DIFFUSION {
+class Diffusion {
     openai: OpenAI;
 	modelName: "dall-e-3" | "dall-e-2";
     size : "256x256" | "512x512" | "1024x1024";
@@ -73,9 +73,11 @@ class DIFFUSION {
             prompt: systemContent,
             n: 1,
             size: this.size,
+            response_format: "b64_json"
           });
           if (this.downScale){
             const [x,y]= this.downScale.split('x').map(Number);
+            console.log(x,y)
             return this.downscaleB64Image(response.data[0].b64_json || "", x, y)
           }
           return response.data[0].b64_json;
@@ -83,11 +85,11 @@ class DIFFUSION {
 async downscaleB64Image(b64 : string, newWidth : number, newHeight : number){
     const b64Data = b64.replace(/^data:image\/\w+;base64,/, '');
     const imgBuffer = Buffer.from(b64Data, 'base64');
-
     const resizedBuffer = await sharp(imgBuffer)
         .resize(newWidth,newHeight)
-        .toBuffer
-    return `data:image/jpeg;base64,${resizedBuffer.toString()}`;
+        .toBuffer()
+    console.log(resizedBuffer.toString('base64'))
+    return `data:image/jpeg;base64,${resizedBuffer.toString('base64')}`;
 }
 }
-export { DIFFUSION };
+export { Diffusion };

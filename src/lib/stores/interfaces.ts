@@ -73,7 +73,7 @@ function trim2DList( twoDList : string[][]){
 }
 export function createConstructionID(methodName : string, input : string[][], x : number, y : number){
     const reducedInput = trim2DList(input); 
-    return `${methodName}>>${reducedInput?.join("|")}[${x},${y}]`
+    return `${methodName}>>${reducedInput?.join("|")}[${x},${y}]` 
 }
 export const  generateCraftRequestStrings = (methodName : string, input : string[][]) => {
     return {
@@ -89,7 +89,8 @@ export const  generateCraftRequestStrings = (methodName : string, input : string
         {
             "thought process" : "Some notes on how you made this decision",
             "newConceptName" : "earth",
-            "type" : "concept"
+            "type" : "concept",
+            "isMaterial" : true
         }
 
         Each method must use the following schema:
@@ -99,7 +100,8 @@ export const  generateCraftRequestStrings = (methodName : string, input : string
             "newMethodName" : "furnace",
             "newInputSchema" : [['#']],
             "newOutputSchema" : [['#']],
-            "type" : "method"
+            "type" : "method",
+            "isMaterial" : false
 
         }
         Following every rule below is essential for the system you are interfacing with to work. Follow each one to give our users the best experience!
@@ -124,13 +126,16 @@ export const  generateCraftRequestStrings = (methodName : string, input : string
         - For testing purposes default to the results from minecraft recipes.
         - Methods have a variety of different input and ouput schemas. This is what keeps the game fun and engaging!
         - Only return 1 method or concept.
-        - Examples 
-
+        - isMaterial is only true when a concept name can be something that's absolutely a material.
+            Example: Earth can be something that is absolutely a material so it is, a garden isn't absolutely something that is a material so it's an object.
+        - Methods are never materials so for methods isMaterial is always false.
+        - Combine all items passed in crafting to form the new concept.
         Examples:
         Concept Example 1:
         {
-            "newConceptName": "wind",
-            "type": "concept"
+            "newConceptName": "air",
+            "type": "concept",
+            "isMaterial" : true
         }
     
         Method Example 1:
@@ -139,7 +144,8 @@ export const  generateCraftRequestStrings = (methodName : string, input : string
             "newMethodName": "crafting table",
             "newInputSchema": [["#", "#", "#"], ["#", "#", "#"], ["#", "#", "#"]],
             "newOutputSchema": [["#"]],
-            "type": "method"
+            "type": "method",
+            "isMaterial" : false
         }
         
         Method Example 2:
@@ -147,7 +153,8 @@ export const  generateCraftRequestStrings = (methodName : string, input : string
             "thought process" : "This is the furnace from minecraft. Furnaces take a 2x1 input and return one thing as an ouput. The bottom input usually receives coal and the top receives the material being cooked. Furnaces are made out of stone so this is made from cobblestone.",
             "newMethodName" : "furnace",
             "newInputSchema" : [['#'],['#']],
-            "type" : "method"
+            "type" : "method",
+            "isMaterial" : false
         }
         `,
         user : `

@@ -5,7 +5,7 @@ import { json, type RequestHandler } from "@sveltejs/kit";
 export const POST = (async ({ request }) => {
     /** Inserts new concept into the concept collection
     */
-    const {conceptName, constructionID} = await request.json();
+    const {conceptName, constructionID, imageB64} = await request.json();
     try {
         const db = new MongoDB(DB_USER,DB_PASS,DB_HOST,DB_NAME);
         const output = await db.create('concepts',
@@ -13,6 +13,7 @@ export const POST = (async ({ request }) => {
         { 
             name : conceptName,
             constructionID : constructionID,
+            imageB64:imageB64
         });
         
         db.close();

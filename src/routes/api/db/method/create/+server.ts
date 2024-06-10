@@ -6,7 +6,7 @@ import { json } from "@sveltejs/kit";
 export const POST = (async ({ request }) => {
     /** Inserts new method into the methods collection.
     */
-    const {methodName, constructionID, inputSchema, outputSchema} = await request.json();
+    const {methodName, constructionID, inputSchema, outputSchema, imageB64} = await request.json();
     try {
         const db = new MongoDB(DB_USER,DB_PASS,DB_HOST,DB_NAME);
         const output = await db.create('methods',
@@ -14,7 +14,8 @@ export const POST = (async ({ request }) => {
             name : methodName,
             constructionID : constructionID,
             inputSchema : inputSchema,
-            outputSchema : outputSchema
+            outputSchema : outputSchema,
+            imageB64:imageB64
         });
         db.close();
         return json({data : output, status : 200});

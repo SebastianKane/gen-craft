@@ -30,10 +30,14 @@ export class CraftMethod {
         this.inputSchema = inputSchema;
         this.outputSchema = outputSchema;
     }
+    /**
+     * @param input 
+     * @returns {Record} - new concept record
+     */
     async craft(input : string[][]){
         for (let i = 0; i < this.outputSchema.length; i++){
             for(let j = 0; j < this.outputSchema[i].length; j++){
-                this.craftOne(input,j,i);
+                return this.craftOne(input,j,i);
             }
         }
     }
@@ -83,10 +87,10 @@ export class CraftMethod {
     
     /**
      * 
-     * @param input - Inputed concepts
-     * @param x - Horizontal location in output grid
-     * @param y - Vertical location in pouput grid
-     * @returns - new concept record
+     * @param {string[][]} input - Inputed concepts
+     * @param {Number} x - Horizontal location in output grid
+     * @param {Number} y - Vertical location in pouput grid
+     * @returns {Record} - new concept record
      */
     async createNewConcept(input : string[][], x : number, y : number){
         let parsable = false;
@@ -94,12 +98,12 @@ export class CraftMethod {
         let tries = 0;
         let parsedOutput;
         while (!parsable && tries < max){
-            const gptRes = await fetch('/api/gpt/makeCraft', {
+            const gptRes = await fetch('/api/gen/concept', {
                 method: 'POST',
                 body: JSON.stringify({ 
                     methodName:this.name,
                     input:input, 
-                    outputSchema: this.outputSchema 
+                    outputSchema: this.outputSchema
                 }),
                 headers: {
                     'content-type': 'application/json'
@@ -119,34 +123,51 @@ export class CraftMethod {
         if(parsable){
             parsedOutput = parsedOutput || parsedOutput.output;
             console.log('look here!',parsedOutput.type === 'concept', parsedOutput)
+            const imagePrompt =`
+            Create a pixel art icon for the ${parsedOutput.isMaterial? 'material' : 'concept'} '${parsedOutput.newConceptName}', Ensure the background is a solid green color (#00FF00). 
+            ${parsedOutput.isMaterial? 'Generate all materials as a sphere.' : ''}
+            `;
+            const imageReq = await fetch('/api/gen/image', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    input : imagePrompt,
+                }),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+            const imageRes = await imageReq.json();
+            const imageB64 = await imageRes.data;
+            console.log(imageB64)
+            
             if (parsedOutput.type === 'concept') {
-                const createRes = await fetch('/api/db/concept/create', {
+                await fetch('/api/db/concept/create', {
                     method: 'POST',
                     body: JSON.stringify({ 
                         conceptName : parsedOutput.newConceptName,
-                        constructionID:createConstructionID(this.name, input, x, y) 
+                        constructionID:createConstructionID(this.name, input, x, y),
+                        imageB64: imageB64
                     }),
                     headers: {
                         'content-type': 'application/json'
                     }
                 });
-                const createOutput = await createRes.json();
             }else if (parsedOutput.type === 'method'){
-
-                const createRes = await fetch('/api/db/method/create', {
+                await fetch('/api/db/method/create', {
                     method: 'POST',
                     body: JSON.stringify({ 
                         methodName : parsedOutput.newMethodName,
                         constructionID:createConstructionID(this.name, input, x, y),
                         inputSchema:replaceNoneEmptyString(parsedOutput.newInputSchema, "#"),
-                        outputSchema:replaceNoneEmptyString(parsedOutput.newOutputSchema, "#")
+                        outputSchema:replaceNoneEmptyString(parsedOutput.newOutputSchema, "#"),
+                        imageB64: imageB64
                     }),
                     headers: {
                         'content-type': 'application/json'
                     }
                 });
-                const createOutput = await createRes.json();
             }
+        parsedOutput['imageB64'] = imageB64;
         return parsedOutput;
         }
     }

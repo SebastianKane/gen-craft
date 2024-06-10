@@ -1,4 +1,4 @@
-import { DIFFUSION } from "../openai";
+import { Diffusion } from "../openai";
 import { logger } from "$lib/stores/logger";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "@sveltejs/kit";
@@ -9,7 +9,7 @@ export const POST = (async ({ request }) => {
 	 */
 	const {input} = await request.json();
 	try {
-		const diff = new DIFFUSION('dall-e-3', '1024x1024');
+		const diff = new Diffusion('dall-e-2', '256x256');
 		const res = await diff.request(input);
 		return json({
 			data : res,
