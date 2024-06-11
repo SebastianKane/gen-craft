@@ -1,6 +1,5 @@
-import { GPT } from "../openai";
+import { Diffusion } from "../openai";
 import { logger } from "$lib/stores/logger";
-import { generateCraftRequestStrings } from "$lib/stores/interfaces";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "@sveltejs/kit";
 
@@ -8,22 +7,21 @@ export const POST = (async ({ request }) => {
 	/**
 	 * Sends a prompt to gpt-4o to generate new concepts given a method, an input and an outputSchema.
 	 */
-	const {methodName, input} = await request.json();
+	const {input} = await request.json();
 	try {
-		const gpt = new GPT('gpt-4o')
-		const reqStrings = generateCraftRequestStrings(methodName, input);
-		console.log(reqStrings)
-		const res = await gpt.request(reqStrings.system, reqStrings.user);
+		const diff = new Diffusion('dall-e-2', '256x256');
+		const res = await diff.request(input);
 		return json({
-			data : res.choices[0].message.content || "",
+			data : res,
 			status : 200
 		});	
 	} catch (error) {
 		console.log(error)
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const log = logger.child({ 'gpt/makeCraft': {
-			methodName : methodName, 
-			input : input} 
+		const log = logger.child({ 'gen/genImage': 
+			{
+			input : input
+			} 
 		});
 		logger.error(error);
 		return json({

@@ -1,4 +1,4 @@
-import { Game } from '../gen-craft/game';
+import { Game } from './Game/Game';
 import type { PageServerLoad, Actions } from '../gen-craft/$types';
 
 export const load = ( async ({cookies}) => {
