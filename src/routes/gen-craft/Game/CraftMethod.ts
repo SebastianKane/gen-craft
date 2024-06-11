@@ -1,20 +1,6 @@
-import type { squareFill } from "../../lib/stores/interfaces";
+import { createConstructionID, type squareFill } from "$lib/stores/interfaces";
 import { logger } from "$lib/stores/logger";
-import { createConstructionID } from "../../lib/stores/interfaces";
-/**
- * Replaces all empty strings in a nested list
- * @param nestedList - A nested list of strings.
- * @param replacement - New string to replace empty strings with.
- * @returns - A new nested list with empty strings replaced.
- */
-function replaceNoneEmptyString(nestedList : string[][], replacement : string){
-    return nestedList.map(sublist =>
-        sublist.map(item =>
-            item !== "" ? replacement : item
-        )
-    )
-}
-
+import { replaceNoneEmptyString } from "./util";
 
 export class CraftMethod {
     name : string;
@@ -167,23 +153,9 @@ export class CraftMethod {
                     }
                 });
             }
-        parsedOutput['imageB64'] = imageB64;
+        parsedOutput['data']['imageB64'] = imageB64;
         return parsedOutput;
         }
     }
-
-}
-
-export class Game {
-    foundConcepts : string[]
-    foundMethods : Record<string,CraftMethod>
-
-	/**
-	 * Create a game object from the player's cookie, or initialize a new game
-	 */
-	constructor() {
-        this.foundConcepts = ['earth','water','fire','air']
-        this.foundMethods = {'Hand Crafting' : new CraftMethod('Hand Crafting', [['#','#','#'],['#','#','#'],['#','#','#']], [['#']])}
-	}
 
 }

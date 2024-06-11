@@ -7,11 +7,12 @@ const hello ='hello';
 import { Game } from './game';	
 import CraftMethod from './Components/CraftMethod.svelte';
 const game = new Game();
+let gameOut = {data:{imageB64:'',name:''}};
 let imageB64 = '';
 const method = game.foundMethods['Hand Crafting'];
 	async function testy(){
-	const gameOut = await method.craft([['','','torch'],['sweden','stardust','garden'],['thorn','rose','wings',]]);
-	imageB64 =  gameOut.imageB64;
+	gameOut = await method.craft([['','',''],['','',''],['','moth','nuke',]]);
+	imageB64 = gameOut.data.imageB64;
 	console.log(gameOut);
 	return gameOut;
 }
@@ -30,6 +31,9 @@ const method = game.foundMethods['Hand Crafting'];
 	<button on:click={testy}>
 		clicky
 	</button>
+	<div>
+		{gameOut.data.name}
+	</div>
     <img style='display:block; width:64px;height:64px;' id='base64image'
        src={imageB64} alt='' />
 </div>
