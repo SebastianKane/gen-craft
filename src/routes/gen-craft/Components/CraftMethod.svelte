@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { spring } from 'svelte/motion';
-    import { CraftMethod } from '../game';
+    import { CraftMethod } from '../Game/CraftMethod';
 	import OutputSquare from './outputSquare.svelte';
 	import { AnimateSharedLayout } from 'svelte-motion';
 	import { Motion } from 'svelte-motion';

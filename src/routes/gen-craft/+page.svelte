@@ -4,17 +4,17 @@ import { enhance } from '$app/forms';
 import type { PageData, ActionData } from '../gen-craft/$types';
 import { reduced_motion } from './reduced-motion';
 const hello ='hello';
-import { Game } from './game';	
+import { Game } from './Game/Game';	
 import CraftMethod from './Components/CraftMethod.svelte';
+	import type { ConceptRecord, MethodRecord } from './Game/types';
 const game = new Game();
-let gameOut = {data:{imageB64:'',name:''}};
 let imageB64 = '';
 const method = game.foundMethods['Hand Crafting'];
 	async function testy(){
-	gameOut = await method.craft([['','',''],['','',''],['','moth','nuke',]]);
-	imageB64 = gameOut.data.imageB64;
-	console.log(gameOut);
-	return gameOut;
+	method.addAllInputsTESTINGONLY([['','',''],['','',''],['','moth','nuke',]]);
+	imageB64 = method.currentOutputs[0][0].imageB64;
+	console.log(method.currentOutputs[0][0]);
+	return method.currentOutputs[0][0];
 }
 </script>
 
@@ -32,7 +32,7 @@ const method = game.foundMethods['Hand Crafting'];
 		clicky
 	</button>
 	<div>
-		{gameOut.data.name}
+		{method.currentOutputs[0][0].name}
 	</div>
     <img style='display:block; width:64px;height:64px;' id='base64image'
        src={imageB64} alt='' />
