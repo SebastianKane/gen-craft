@@ -209,7 +209,7 @@ export class CraftMethod {
                     }
                 });
             }
-        //parsedOutput['data']['imageB64'] = imageB64;
+        parsedOutput['imageB64'] = imageB64;
         return parsedOutput;
         }
     }

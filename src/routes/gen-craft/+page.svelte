@@ -10,8 +10,8 @@ const game = new Game();
 
 $: method = game.foundMethods['Hand Crafting'];
 async function testy(){
-	method.addAllInputsTESTINGONLY([['','',''],['','',''],['','unicorn','greek',]]);
-	method.craft();
+	method.addAllInputsTESTINGONLY([['','',''],['','','mango'],['fire','unicorn','greek',]]);
+	await method.craft();
 	method = method;
 }
 </script>

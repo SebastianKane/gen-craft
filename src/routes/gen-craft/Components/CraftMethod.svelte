@@ -10,10 +10,16 @@
     export let thisMethod;
 	export let width = 400;
 	export let height = 200
-	$: method = thisMethod;
-	$: currentOutputs = method.currentOutputs;
-	$: currentInputs = method.currentInputs;
-
+	let method = thisMethod;
+	let currentOutputs = method.currentOutputs;
+	let currentInputs = method.currentInputs;
+	$: {
+		method = thisMethod;
+		currentOutputs = method.currentOutputs;
+		currentInputs = method.currentInputs;
+		console.log(`multiple statements can be combined`);
+		console.log(`the current title is ${currentOutputs[0][0].name}`);
+		}
 	let gap=10;
 </script>
 

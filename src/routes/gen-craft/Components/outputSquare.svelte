@@ -1,6 +1,8 @@
 <script lang="ts">
     import { Motion } from 'svelte-motion';
-    export let outputSquare;
+	import type { ConceptRecord, MethodRecord } from '../Game/types';
+    export let outputSquare : ConceptRecord | MethodRecord;
+	$: outputSquare = outputSquare;
 </script>
 <Motion>
 
@@ -26,8 +28,8 @@
 	}
 </style>
 
-<Motion let:motion layoutId={outputSquare.id} layout>
-	<div use:motion class=outputSquare style={`background-color:rgb(${outputSquare.r},${outputSquare.g},${outputSquare.b})`}>
+<Motion let:motion layoutId={outputSquare.name} layout>
+	<div use:motion class=outputSquare >
 		<img class=outputSquareImage src={outputSquare.imageB64} alt={outputSquare.name} title={outputSquare.name}>
 	</div>
 </Motion>
