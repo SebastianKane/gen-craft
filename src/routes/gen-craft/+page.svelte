@@ -3,18 +3,16 @@ import { confetti } from '@neoconfetti/svelte';
 import { enhance } from '$app/forms';
 import type { PageData, ActionData } from '../gen-craft/$types';
 import { reduced_motion } from './reduced-motion';
-const hello ='hello';
 import { Game } from './Game/Game';	
 import CraftMethod from './Components/CraftMethod.svelte';
-	import type { ConceptRecord, MethodRecord } from './Game/types';
+import type { ConceptRecord, MethodRecord } from './Game/types';
 const game = new Game();
-let imageB64 = '';
-const method = game.foundMethods['Hand Crafting'];
-	async function testy(){
-	method.addAllInputsTESTINGONLY([['','',''],['','',''],['','moth','nuke',]]);
-	imageB64 = method.currentOutputs[0][0].imageB64;
-	console.log(method.currentOutputs[0][0]);
-	return method.currentOutputs[0][0];
+
+$: method = game.foundMethods['Hand Crafting'];
+async function testy(){
+	method.addAllInputsTESTINGONLY([['','',''],['','',''],['','unicorn','greek',]]);
+	method.craft();
+	method = method;
 }
 </script>
 
@@ -28,18 +26,13 @@ const method = game.foundMethods['Hand Crafting'];
 <!-- <h1>{await testy()}</h1> -->
 <div class = "background">
 	<h1 class="visually-hidden">Sverdle</h1>
-	<button on:click={testy}>
+	<button on:click={() => testy()}>
 		clicky
 	</button>
 	<div>
-		{method.currentOutputs[0][0].name}
 	</div>
-    <img style='display:block; width:64px;height:64px;' id='base64image'
-       src={imageB64} alt='' />
 </div>
-<CraftMethod thisMethod = {method}>
-
-</CraftMethod>
+<CraftMethod thisMethod={method} />
 
 <style>
 	.background{

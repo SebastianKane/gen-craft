@@ -1,6 +1,6 @@
 import { createConstructionID, type squareFill } from "$lib/stores/interfaces";
 import { logger } from "$lib/stores/logger";
-import { emptyRecord, replaceNoneEmptyString } from "./util";
+import { emptyRecord, initializeCurrentBySchema, replaceNoneEmptyString } from "./util";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ConceptRecord, MethodRecord } from "./types";
 import { getNamesFromConceptGrid } from "./util";
@@ -8,8 +8,8 @@ export class CraftMethod {
     name : string;
     inputSchema : squareFill[][];
     outputSchema : squareFill[][];
-    currentInputs : ConceptRecord[][];
-    currentOutputs : ConceptRecord[][];
+    currentInputs : (ConceptRecord | null )[][];
+    currentOutputs : (ConceptRecord | null)[][];
     /**
      * Generate Craft Method Object. This makes it easy to generate new concepts and store information
      * about a craft method.
@@ -18,18 +18,12 @@ export class CraftMethod {
         this.name = name;
         this.inputSchema = inputSchema;
         this.outputSchema = outputSchema;
-        this.currentInputs = new Array(inputSchema.length)
-            .fill({imageB64:'',name:''})
-            .map(() => 
-                new Array(inputSchema[0].length).fill(false)
-            );
-        this.currentOutputs = new Array(outputSchema.length)
-            .fill({imageB64:'',name:''})
-            .map(() => 
-                new Array(outputSchema[0].length).fill(false)
-            );
+        this.currentInputs = initializeCurrentBySchema(this.inputSchema);
+        this.currentOutputs = initializeCurrentBySchema(this.outputSchema);
 
     }
+
+
     /** Adds all inputs from a list of list of records as current inputs for a craft method.
      * @param { ConceptRecord[][] } concepts - A list of list of concepts. 
      */
@@ -70,21 +64,14 @@ export class CraftMethod {
     }
 
     /**
-     * @param {string[][]} input - List of list of conceptNames. 
-     * @return {ConceptRecord[][]}
+     * Crafts from currentInputs and inserts the results into currentOutputs.
      */
     async craft(){
         for (let i = 0; i < this.outputSchema.length; i++){
             for(let j = 0; j < this.outputSchema[i].length; j++){
-                const craftOuput = await this.craftOne(i,j);
-                this.currentOutputs[i][j] = {
-                    imageB64 : craftOuput.imageB64,
-                    name : craftOuput.name,
-                    constructionID : craftOuput.constructionID
-                }
+                await this.craftOne(i,j);
             }
         }
-        return this.currentOutputs;
     }
 
     /**
@@ -99,7 +86,7 @@ export class CraftMethod {
             // Check if the two Schema's Match before Combining
             for (let i = 0; i < this.inputSchema.length; i++){
                 for(let j = 0; j < this.inputSchema[i].length; j++){
-                    if( this.inputSchema[i][j] == '' && this.currentInputs[i][j].name != '' ){
+                    if( this.inputSchema[i][j] == '' && this.currentInputs[i][j] === null ){
                         throw new Error("Input's schema and inputSchema do not match! Stupid robit 😑");
                     }
                 }
@@ -113,14 +100,15 @@ export class CraftMethod {
                 }
             });
             const findOutput = await findRes.json();
-            console.log('res',findOutput.data)
             if (findOutput.data){
-                output = findOutput;
+                console.log('res',findOutput.data)
+                output = findOutput.data;
             }else{
                 console.log('CreatingNewConcept!')
                 output = await this.createNewConcept(x, y);
             }
             this.currentOutputs[y][x] = output;
+            console.log('craft method', this.currentOutputs)
             return output;
         } catch (error) {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -221,7 +209,7 @@ export class CraftMethod {
                     }
                 });
             }
-        parsedOutput['data']['imageB64'] = imageB64;
+        //parsedOutput['data']['imageB64'] = imageB64;
         return parsedOutput;
         }
     }

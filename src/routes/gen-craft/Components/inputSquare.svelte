@@ -9,7 +9,8 @@
 
 <style>
 	.inputSquare {
-		width:2.5rem;
+		height : 45px;
+		width : 45px;
 		border-style: dotted;
 		color:white;
 		background-color: aliceblue;
@@ -20,10 +21,14 @@
 		font-size:30px;
 		font-weight:900;
 	}
+	.inputSquareImage {
+		max-width : 100%;
+		max-height : 100%;
+	}
 </style>
 
 <Motion let:motion layoutId={inputSquare.id} layout>
 	<div use:motion class=inputSquare style={`background-color:rgb(${inputSquare.r},${inputSquare.g},${inputSquare.b})`}>
-		_		
+		<img class=inputSquareImage src={inputSquare.imageB64} alt={inputSquare.name} title={inputSquare.name}>
 	</div>
 </Motion>
