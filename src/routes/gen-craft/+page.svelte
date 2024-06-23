@@ -1,11 +1,6 @@
 <script lang="ts">
-import { confetti } from '@neoconfetti/svelte';
-import { enhance } from '$app/forms';
-import type { PageData, ActionData } from '../gen-craft/$types';
-import { reduced_motion } from './reduced-motion';
 import { Game } from './Game/Game';	
 import CraftMethod from './Components/CraftMethod.svelte';
-import type { ConceptRecord, MethodRecord } from './Game/types';
 const game = new Game();
 
 $: method = game.foundMethods['Hand Crafting'];

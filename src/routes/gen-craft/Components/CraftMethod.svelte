@@ -18,13 +18,20 @@
 	:global(*) {
 	box-sizing: border-box;
   	}
-	.methodBackground {
+	.craftMethod {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
-			border: 4px solid grey;
-			background-color: floralwhite;
+			background-color: lightgrey;
+			width:400px;
+			aspect-ratio: 2/1;
+			position:relative;
+			border-radius: 30px;
+			font-size: x-small;
+			border: 1px black;
+			border-style: solid;
+			box-shadow: 3px 3px 3px black, inset 2px 2px white;
 		}
 	.inputContainer {
 		display:grid;
@@ -41,17 +48,12 @@
 			justify-content: center;
 		}
 	
-	.methodBackground{
-		width:400px;
-		aspect-ratio: 2/1;
-		position:relative;
-	}
 	.inputContainer, .outputContainer{
 		grid-gap:10px;
 	}
 	  
   </style>
-  <div class="methodBackground">
+  <div class="craftMethod">
 	  <div style="display: flex;">
 		{thisMethod.name}
 		<span style="flex: 1;">

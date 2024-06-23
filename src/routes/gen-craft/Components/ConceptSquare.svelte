@@ -11,10 +11,8 @@
 	.conceptSquare {
 		height : 45px;
 		width : 45px;
-		border-style: dotted;
-		color:white;
-		background-color: aliceblue;
-		border-color: black;
+		background-color: rgb(158, 158, 158);
+		box-shadow:  inset 3px 3px black, 3px 3px white;
 		display:flex;
 		align-items:center;
 		justify-content:center;
