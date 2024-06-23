@@ -34,8 +34,8 @@ export const emptyRecord = {
 }
 /**
  * 
- * @param { squareFill[][] } schema -Input or output schema.
- * @returns { ConceptRecord[][] } - List of list of empty concept records.
+ * @param  schema -Input or output schema.
+ * @returns -List of list of empty concept records.
  */
 export function initializeCurrentBySchema(schema : squareFill[][]){
     return schema.map(row =>

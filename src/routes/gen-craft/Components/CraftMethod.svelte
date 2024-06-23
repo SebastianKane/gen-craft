@@ -1,15 +1,8 @@
 <script lang="ts">
-	import { spring } from 'svelte/motion';
-    import { CraftMethod } from '../Game/CraftMethod';
-	import OutputSquare from './outputSquare.svelte';
-	import { AnimateSharedLayout } from 'svelte-motion';
 	import { Motion } from 'svelte-motion';
-	import EmptySquare from './emptySquare.svelte';
-	import InputSquare from './inputSquare.svelte';
 	import Boop from './Animations/Boop.svelte';
+	import ConceptSquare from './ConceptSquare.svelte';
     export let thisMethod;
-	export let width = 400;
-	export let height = 200
 	let method = thisMethod;
 	let currentOutputs = method.currentOutputs;
 	let currentInputs = method.currentInputs;
@@ -17,10 +10,8 @@
 		method = thisMethod;
 		currentOutputs = method.currentOutputs;
 		currentInputs = method.currentInputs;
-		console.log(`multiple statements can be combined`);
 		console.log(`the current title is ${currentOutputs[0][0].name}`);
 		}
-	let gap=10;
 </script>
 
 <style>
@@ -43,35 +34,32 @@
 		display:grid;
 		grid-template-columns:auto auto;
 	}
+	
 	span {
 			display: flex;
 			align-items: center;
 			justify-content: center;
 		}
 	
-	button {
-		border:4px solid white;
-		background-color: transparent;
-		color: white;
-		border-radius:4rem;
-		padding:1rem 2rem;
-		font-size:200%;
+	.methodBackground{
+		width:400px;
+		aspect-ratio: 2/1;
+		position:relative;
+	}
+	.inputContainer, .outputContainer{
+		grid-gap:10px;
 	}
 	  
   </style>
-  <div class="methodBackground" style={'width:'+width+'px; height:'+height+'px;'}>
+  <div class="methodBackground">
 	  <div style="display: flex;">
 		{thisMethod.name}
 		<span style="flex: 1;">
 			  <Motion let:motion={grid} layout>
-				<div use:grid class=inputContainer style={'grid-gap:'+gap+'px;'}>
-					{#each currentInputs as inputLine}
-						{#each inputLine as inputSquare}
-							{#if inputSquare}
-								<InputSquare {inputSquare}/>
-							{:else}
-								<EmptySquare />
-							{/if}
+				<div use:grid class=inputContainer>
+					{#each currentInputs as inputLine, y}
+						{#each inputLine as conceptSquare, x}
+							<ConceptSquare  { conceptSquare } { x } { y }/>
 						{/each}
 					{/each}
 					</div>
@@ -81,14 +69,10 @@
 		</Boop>
 		<span style="flex: 1;">
 			<Motion let:motion={grid} layout>
-				<div use:grid class=outputContainer style={'grid-gap:'+gap+'px'}>
-					{#each currentOutputs as outputLine}
-						{#each outputLine as outputSquare}
-							{#if outputSquare}
-								<OutputSquare {outputSquare}/>
-							{:else}
-								<EmptySquare/>
-							{/if}
+				<div use:grid class=outputContainer >
+					{#each currentOutputs as outputLine, y}
+						{#each outputLine as conceptSquare, x}
+							<ConceptSquare { conceptSquare } { x } { y } isOutput= { true }/>
 						{/each}
 					{/each}
 				</div>

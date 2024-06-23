@@ -42,6 +42,7 @@
 	"dependencies": {
 		"buffer": "^6.0.3",
 		"eslint": "^8.57.0",
+		"flowbite-svelte": "^0.46.4",
 		"mongodb": "^6.6.2",
 		"openai": "^4.47.1",
 		"pino": "^9.1.0",
