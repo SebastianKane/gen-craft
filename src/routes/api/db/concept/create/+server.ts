@@ -2,20 +2,29 @@ import { MongoDB } from "../../mongodb";
 import { DB_USER, DB_PASS, DB_HOST, DB_NAME } from "$env/static/private";
 import { logger } from "$lib/stores/logger";
 import { json, type RequestHandler } from "@sveltejs/kit";
+import type { MethodRecord, RecordType } from "../../../../gen-craft/Game/types";
 export const POST = (async ({ request }) => {
     /** Inserts new concept into the concept collection
     */
-    const {conceptName, constructionID, imageB64} = await request.json();
+    const { conceptName, 
+            constructionID, 
+            imageB64,
+            inputSchema,
+            outputSchema
+        } = await request.json();
     try {
         const db = new MongoDB(DB_USER,DB_PASS,DB_HOST,DB_NAME);
-        const output = await db.create('concepts',
-        
-        { 
+        const document : RecordType = { 
             name : conceptName,
             constructionID : constructionID,
             imageB64:imageB64
-        });
+        }
         
+        if (inputSchema && outputSchema){
+            (document as MethodRecord).inputSchema = inputSchema;
+            (document as MethodRecord).outputSchema = outputSchema;
+        }
+        const output = await db.create('concepts', document);
         db.close();
         return json({data : output, status : 200});
     } catch (error) {

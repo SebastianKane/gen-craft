@@ -1,14 +1,35 @@
 <script lang="ts">
 import { Game } from './Game/Game';	
 import CraftMethod from './Components/CraftMethod.svelte';
+import Itembar from './Components/Itembar.svelte';
+import { onMount } from 'svelte';
+import type { squareFill } from '$lib/stores/interfaces';
+import type { MethodRecord } from './Game/types';
 const game = new Game();
-
-$: method = game.foundMethods['Hand Crafting'];
+$: method = game.foundMethods['Empty Method'];
 async function testy(){
 	method.addAllInputsTESTINGONLY([['','',''],['','','mango'],['fire','unicorn','greek',]]);
 	await method.craft();
 	method = method;
 }
+
+onMount(() => {
+	let startingConcepts = ['air','water','fire','earth','',''];
+	console.log(startingConcepts)
+	game.initStartingConcepts(startingConcepts);
+	let startingMethods : MethodRecord[] = [{
+		name:'Hand Crafting',
+		constructionID:'',
+		imageB64:'', 
+		inputSchema:[['#','#','#'],['#','#','#'],['#','#','#']], 
+		outputSchema:[['#']]
+	}];
+	game.initStartingMethods(startingMethods);
+	method = game.foundMethods['Hand Crafting'];
+});
+
+
+
 </script>
 
 
@@ -18,7 +39,6 @@ async function testy(){
 	<title>Gen Craft</title>
 	<meta name="description" content="Craft forever!" />
 </svelte:head>
-<!-- <h1>{await testy()}</h1> -->
 <div class = "background">
 	<h1 class="visually-hidden">Sverdle</h1>
 	<button on:click={() => testy()}>
@@ -28,7 +48,6 @@ async function testy(){
 	</div>
 </div>
 <CraftMethod thisMethod={method} />
-
 <style>
 	.background{
 		background: bisque;

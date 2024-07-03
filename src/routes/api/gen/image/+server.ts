@@ -7,7 +7,10 @@ export const POST = (async ({ request }) => {
 	/**
 	 * Sends a prompt to gpt-4o to generate new concepts given a method, an input and an outputSchema.
 	 */
-	const {input} = await request.json();
+	const {
+		input
+	} = await request.json();
+	
 	try {
 		const diff = new Diffusion('dall-e-2', '256x256');
 		const res = await diff.request(input);

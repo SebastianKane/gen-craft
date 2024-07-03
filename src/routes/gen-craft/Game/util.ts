@@ -1,5 +1,6 @@
 import type { squareFill } from "$lib/stores/interfaces";
-import type { ConceptRecord } from "./types"
+import type { ConceptRecord } from "./types";
+
 /**
  * Replaces all non-empty strings from a list of list of strings with a value.
  * @param { string[][] } nestedList - Inputed string of strings.
@@ -32,6 +33,20 @@ export const emptyRecord = {
     inputSchema: [],
     outputSchema: [],
 }
+/**
+ * 
+ * @param conceptName 
+ * @param isMaterial 
+ * @returns 
+ */
+export function getImagePrompt(conceptName: string, isMaterial:boolean){
+    return`
+    Create a pixel art icon for the ${isMaterial? 'material' : 'concept'} '${conceptName}', 
+    Ensure the background is a solid green color (#00FF00). 
+    ${isMaterial? 'Generate all materials as a sphere.' : ''}
+    `;
+}
+
 /**
  * 
  * @param  schema -Input or output schema.

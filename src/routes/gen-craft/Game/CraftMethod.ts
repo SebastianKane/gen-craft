@@ -4,6 +4,7 @@ import { emptyRecord, initializeCurrentBySchema, replaceNoneEmptyString } from "
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ConceptRecord, MethodRecord } from "./types";
 import { getNamesFromConceptGrid } from "./util";
+import { craftOneConcept, craftOneMethod, findByConstructionID, genNewConcept } from "../Managers/dbManager";
 export class CraftMethod {
     name : string;
     inputSchema : squareFill[][];
@@ -78,7 +79,7 @@ export class CraftMethod {
      * Craft's one concept at the given coordinates in the output.
      * @param x - Horizontal location in output grid.
      * @param y - Vertical location in pouput grid.
-     * @returns {ConceptRecord | MethodRecord} - New or current concept or method. 
+     * @returns - New or current concept or method. 
      */
     async craftOne(x : number, y : number){
         try {
@@ -91,14 +92,8 @@ export class CraftMethod {
                     }
                 }
             }
-
-            const findRes = await fetch('/api/db/concept/find/byConstructionID', {
-                method: 'POST',
-                body: JSON.stringify({ constructionID:createConstructionID(this.name, this.getInputNames(), x, y) }),
-                headers: {
-                    'content-type': 'application/json'
-                }
-            });
+            const constructionID = createConstructionID(this.name, this.getInputNames(), x, y);
+            const findRes = await findByConstructionID(constructionID);
             const findOutput = await findRes.json();
             if (findOutput.data){
                 console.log('res',findOutput.data)
@@ -130,31 +125,22 @@ export class CraftMethod {
     
     /**
      * Creates a new concept or method and saves it to the DB.
-     * @param {Number} x - Horizontal location in output grid
-     * @param {Number} y - Vertical location in pouput grid
-     * @returns {Concept | Method} - new concept record
+     * @param  x - Horizontal location in output grid
+     * @param  y - Vertical location in pouput grid
+     * @returns - new concept record
      */
     async createNewConcept(x : number, y : number){
         let parsable = false;
         const max = 5;
         let tries = 0;
         let parsedOutput;
+        const constructionID = createConstructionID(this.name, this.getInputNames(), x, y);
         while (!parsable && tries < max){
-            const gptRes = await fetch('/api/gen/concept', {
-                method: 'POST',
-                body: JSON.stringify({ 
-                    methodName:this.name,
-                    input:this.getInputNames(), 
-                    outputSchema: this.outputSchema
-                }),
-                headers: {
-                    'content-type': 'application/json'
-                }
-            });
-            const gptOutput = await gptRes.json();
-            console.log(gptOutput)
+            const gptOutput = await genNewConcept(this.name, this.getInputNames(), this.outputSchema);
             try {
-                parsedOutput = JSON.parse(gptOutput.data);
+                parsedOutput = JSON.parse(gptOutput);
+                parsedOutput.newInputSchema = replaceNoneEmptyString(parsedOutput.newInputSchema, "#");
+                parsedOutput.newOutputSchema = replaceNoneEmptyString(parsedOutput.newOutputSchema, "#")
 
                 parsable = true;
             } catch (e) {
@@ -163,53 +149,12 @@ export class CraftMethod {
             }
         }
         if(parsable){
-            parsedOutput = parsedOutput || parsedOutput.output;
-            console.log('look here!',parsedOutput.type === 'concept', parsedOutput)
-            const imagePrompt =`
-            Create a pixel art icon for the ${parsedOutput.isMaterial? 'material' : 'concept'} '${parsedOutput.newConceptName}', Ensure the background is a solid green color (#00FF00). 
-            ${parsedOutput.isMaterial? 'Generate all materials as a sphere.' : ''}
-            `;
-            const imageReq = await fetch('/api/gen/image', {
-                method: 'POST',
-                body: JSON.stringify({ 
-                    input : imagePrompt,
-                }),
-                headers: {
-                    'content-type': 'application/json'
-                }
-            });
-            const imageRes = await imageReq.json();
-            const imageB64 = await imageRes.data;
-            console.log(imageB64)
-            
+            parsedOutput = parsedOutput || parsedOutput.output            
             if (parsedOutput.type === 'concept') {
-                await fetch('/api/db/concept/create', {
-                    method: 'POST',
-                    body: JSON.stringify({ 
-                        conceptName : parsedOutput.newConceptName,
-                        constructionID:createConstructionID(this.name, this.getInputNames(), x, y),
-                        imageB64: imageB64
-                    }),
-                    headers: {
-                        'content-type': 'application/json'
-                    }
-                });
+                await craftOneConcept(parsedOutput.conceptName, parsedOutput.isMaterial, constructionID);
             }else if (parsedOutput.type === 'method'){
-                await fetch('/api/db/method/create', {
-                    method: 'POST',
-                    body: JSON.stringify({ 
-                        methodName : parsedOutput.newMethodName,
-                        constructionID:createConstructionID(this.name, this.getInputNames(), x, y),
-                        inputSchema:replaceNoneEmptyString(parsedOutput.newInputSchema, "#"),
-                        outputSchema:replaceNoneEmptyString(parsedOutput.newOutputSchema, "#"),
-                        imageB64: imageB64
-                    }),
-                    headers: {
-                        'content-type': 'application/json'
-                    }
-                });
+                await craftOneMethod(parsedOutput.conceptName, parsedOutput.newInputSchema, parsedOutput.newOutputSchema, constructionID);
             }
-        parsedOutput['imageB64'] = imageB64;
         return parsedOutput;
         }
     }

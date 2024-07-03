@@ -1,4 +1,5 @@
 import { MongoClient, ObjectId, Db } from "mongodb";
+import type { RecordType } from "../../gen-craft/Game/types";
 /**
  * Class representing a MongoDB database connection and interactions
  */
@@ -8,10 +9,10 @@ class MongoDB {
     db: Db;
     /**
      * constructor
-     * @param {string} db_user - user name for mongo
-     * @param {string} db_pass - password for mongo
-     * @param {string} db_host - host for mongo
-     * @param {string} db_name - name of mongo db
+     * @param db_user - user name for mongo
+     * @param db_pass - password for mongo
+     * @param db_host - host for mongo
+     * @param db_name - name of mongo db
      * and sets up properties for the MongoDB client and database
      */
     constructor(db_user : string, db_pass : string, db_host : string, db_name : string){
@@ -31,11 +32,11 @@ class MongoDB {
     }
     /**
      * Creates a new document in the specified collection
-     * @param {string} collectionName - the name of the collection
-     * @param {Record} data - the data to be inserted into the collection
-     * @returns {Promise<Object>} - a Promise that resolves with the acknoledgement document
+     * @param collectionName - the name of the collection
+     * @param  data - the data to be inserted into the collection
+     * @returns - a Promise that resolves with the acknoledgement document
      */
-    async create(collectionName : string, data : Record<string,unknown>) {
+    async create(collectionName : string, data : RecordType) {
         try {
             console.log(collectionName, data)
             const collection = this.db.collection(collectionName);
@@ -49,9 +50,9 @@ class MongoDB {
     
     /**
      * Finds documents by their _id in the specified collection
-     * @param {string} collectionName - the name of the collection
-     * @param {string} _id - the _id of the document to find
-     * @returns {Promise<cursor>} - a Promise that resolves with the cursor
+     * @param collectionName - the name of the collection
+     * @param _id - the _id of the document to find
+     * @returns - a Promise that resolves with the cursor
      */
     async findbyID(collectionName : string, _id : string) {
         const collection = this.db.collection(collectionName);
@@ -63,9 +64,9 @@ class MongoDB {
     }
     /**
      * Finds documents by their _id in the specified collection
-     * @param {string} collectionName - the name of the collection
-     * @param {string} constructionID -  identify a concept or method by its construction
-     * @returns {Promise<cursor>} - a Promise that resolves with the cursor
+     * @param collectionName - the name of the collection
+     * @param constructionID -  identify a concept or method by its construction
+     * @returns - a Promise that resolves with the cursor
      */
     async findByConstructionID( constructionID : string, collectionName? : string,) {
         //TODO ts forced this into being an ugly monstrosity. Make this pretty one day
